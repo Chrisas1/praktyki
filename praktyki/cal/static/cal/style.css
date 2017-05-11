@@ -1,0 +1,126 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i,dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, section, summary,
+time, audio {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  font-family: 'Montserrat', sans-serif;
+  color: #D1D1D1;
+}
+
+.container {
+  height:720px;
+  width: 1000px;
+  display: inline-flex;
+}
+
+.timings {
+  text-align: right;
+  padding-right: 10px;
+  width: 100px;
+  height: 720px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: white;
+  font-size: 0.5em;
+  box-sizing: border-box
+}
+
+.timings span {
+  font-size: 200%;
+  color: #696969;
+}
+
+.days {
+  height: 720px;
+  width: 620px;
+  padding: 0px 10px;
+  background-color: #F0F0F0;
+  border-color: #D1D1D1;
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
+}
+
+.event {
+  background-color: white;
+  border-style: solid;
+  border-width: 1px;
+  border-left-width: 5px;
+  border-color: #D1D1D1;
+  border-left-color: #57b986;
+  padding-left: 10px;
+  padding-top: 5px;
+  position: absolute;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.event .title {
+  color: #57b986;
+  font-size: 150%;
+}
+.todo
+{
+  margin-left: 100px;
+  width: 620px;
+  height: 150px;
+  background-color: #F0F0F0;
+  border-color: #D1D1D1;
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.todo li
+{
+  color: #57b986;
+  margin-left: 10px;
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #57b986;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+.todo li:hover
+{
+  color: #F0F0F0;
+  background-color: #57b986;
+}
+.todo ul li:hover ul {display: block;}
+.todo ul li ul {
+  position: absolute;
+  width: 200px;
+  display: none;
+  min-height: 10px;
+}
+.todo ul li:hover ul
+{
+  display: block;
+}
+.todo ul li ul li
+{
+  color: #57b986;
+  background-color: white;
+  border-radius: 0;
+  border-left: 6px solid #57b986;
+}

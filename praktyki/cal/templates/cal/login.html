@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        {% load static %}
+        <link href="/static/cal/login.css" rel="stylesheet">
+    </head>
+    <body>
+        {% if logged_out %}
+            <p class="success">{{ logged_out }}</p>
+        {% endif %}
+        <form action="{% url 'cal:login' %}" method="post">
+            {% csrf_token %}
+            Login: <input type="text" name="username"><br>
+            Hasło: <input type="password" name="password"><br>
+            <input type="submit" name="Submit" value="Zaloguj">
+        </form>
+        <br>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+    </body>
+</html>
