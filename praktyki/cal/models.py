@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime
 
+
 # Create your models here.
 class Client(models.Model):
     name = models.CharField(max_length=40)
@@ -27,3 +28,6 @@ class Task(models.Model):
             return True
         else:
             return False
+
+    def week_number(self):
+        return self.start.isocalendar()[1]

@@ -17,6 +17,7 @@ from django.conf.urls import include,url
 from django.contrib import admin
 
 urlpatterns = [
+    url(r'^week/', include('week.urls')),
     url(r'^', include('cal.urls')),
     url(r'^admin/', admin.site.urls),
 ]
