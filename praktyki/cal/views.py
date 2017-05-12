@@ -8,7 +8,7 @@ def index(request):
     if not request.user.is_authenticated:
         return render(request, 'cal/login.html')
     else:
-        return render(request, 'cal/index.html')
+        return render(request, 'cal/index.html', {'logged_user': request.user})
 
 def login(request):
     username = request.POST['username']
