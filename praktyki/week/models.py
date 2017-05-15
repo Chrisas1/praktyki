@@ -5,10 +5,16 @@ from collections import Iterable
 
 
 class Worker(models.Model):
+    """
+    Model calculates not available hours and free hours.
+    """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     hours_per_week = models.IntegerField()
 
     def tasks_hours(self, week_number):
+        """
+        Return how many hours are assigned. 
+        """
         tasks = Task.objects.filter(user=self.user)
         week_tasks = [x for x in tasks if x.week_number() == week_number]
         tasks_hours = 0
@@ -17,4 +23,7 @@ class Worker(models.Model):
         return tasks_hours
 
     def available_hours(self, week_number):
+        """
+        Return free hours.
+        """
         return self.hours_per_week - self.tasks_hours(week_number)

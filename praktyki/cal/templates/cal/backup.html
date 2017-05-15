@@ -1,14 +1,10 @@
-{% extends 'base/base.html' %}
-{% load bootstrap3 %}
-
-{% block title %}Login{% endblock %}
-
-{% block head %}
+<!DOCTYPE html>
+<html>
+    <head>
         {% load static %}
         <link href="/static/cal/login.css" rel="stylesheet">
-{% endblock %}
-
-{% block content %}
+    </head>
+    <body>
         {% if logged_out %}
             <p class="success">{{ logged_out }}</p>
         {% endif %}
@@ -22,4 +18,5 @@
         {% if error %}
             <p class="error">{{ error }}</p>
         {% endif %}
-{% endblock %}
+    </body>
+</html>

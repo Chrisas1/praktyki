@@ -1,13 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>Cool Calendar</title>
+{% extends 'base/base.html' %}
+
+  {% block title %}Calendar{% endblock %}
+  {% block head %}
   {% load static %}
   <link href="/static/cal/style.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-</head>
+  {% endblock %}
 
-<body>
+{% block content %}
 <div class="todo">
   <p>TO-DO</p>
   <ul>
@@ -69,5 +69,4 @@
 <input type="button" onclick="location.href='{% url 'cal:log_out' %}'" value="Logout">
 <script src="/static/cal/wtf.js"></script>
 <script src="/static/cal/layOutDay.js"></script>
-</body>
-</html>
+{% endblock %}

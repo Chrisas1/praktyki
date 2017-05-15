@@ -1,3 +1,5 @@
-{% for a in users %}
-{{a}}
+{% for a in users_info %}
+    {% for x in a %}
+        {{ x }} 
+    {% endfor %} <br> 
 {% endfor %}
