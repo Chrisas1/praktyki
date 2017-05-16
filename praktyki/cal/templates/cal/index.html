@@ -8,6 +8,13 @@
   {% endblock %}
 
 {% block content %}
+<nav>
+  <ul>   
+    <li><a href="{% url 'cal:index' %}">Calendar</a></li>
+    <li><a href="{% url 'week:week_sum' %}">Week View</a></li>
+    <li style="float: right"><a href="{% url 'cal:log_out' %}">Logout</a></li>
+  </ul>
+</nav>
 <div class="todo">
   <p>TO-DO</p>
   <ul>
@@ -66,7 +73,9 @@
   </div>
 
 </div>
-<input type="button" onclick="location.href='{% url 'cal:log_out' %}'" value="Logout">
 <script src="/static/cal/wtf.js"></script>
-<script src="/static/cal/layOutDay.js"></script>
+<script>
+  const events = [ {% for task in tasks %} {start: {{ task.0 }}, end: {{task.1}}, message: "{{ task.2 }}", description: "{{ task.3 }}" }, {% endfor %} ];
+  layOutDay(events);
+</script>
 {% endblock %}

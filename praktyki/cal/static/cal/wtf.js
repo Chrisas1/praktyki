@@ -17,7 +17,7 @@ var createEvent = (height, top, left, units, message, description) => {
   // Customized CSS to position each event
   node.style.width = (containerWidth/units) + "px";
   node.style.height = height + "px";
-  node.style.top = 150 + top + "px";
+  node.style.top = 210 + top + "px";
   node.style.left = 100 + left + "px";
 
   document.getElementById("events").appendChild(node);

@@ -1,5 +1,31 @@
+{% extends 'base/base.html' %}
+
+{% block head%}
+<link href="/static/cal/style.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<nav>
+  <ul>   
+    <li><a href="{% url 'cal:index' %}">Calendar</a></li>
+    <li><a href="{% url 'week:week_sum' %}">Week View</a></li>
+    <li style="float: right"><a href="{% url 'cal:log_out' %}">Logout</a></li>
+  </ul>
+</nav>
+<div class="content"> 
+<table>
+    <tr>
+        <th>User Name</th>
+        <th>Spend Hours</th>
+        <th> Available Hours</th>
+    </tr>
 {% for a in users_info %}
+    <tr>
     {% for x in a %}
-        {{ x }} 
-    {% endfor %} <br> 
+        <td>{{ x }}</td> 
+    {% endfor %}
+    </tr> 
 {% endfor %}
+</table>
+</div>
+{% endblock %}
