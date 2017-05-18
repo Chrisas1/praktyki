@@ -1,0 +1,23 @@
+{% extends 'base/base.html' %}
+{% block title %}Form{% endblock %}
+{% block head %}
+{% load static %}
+<link href="/static/cal/style.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<nav>
+    <ul>
+        <li><a href="{% url 'cal:index' %}">Calendar</a></li>
+        <li><a href="{% url 'week:week_sum' %}">Week View</a></li>
+        <li style="float: right"><a href="{% url 'cal:log_out' %}">Logout</a></li>
+    </ul>
+</nav>
+
+<form action="{% url 'cal:form' %}" method="POST">
+    {% csrf_token %}
+    {{ taskform }}
+    <input type="submit" value="Submit"/>
+</form>
+{% endblock %}

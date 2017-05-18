@@ -2,8 +2,11 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib.auth import authenticate, logout
 from django.contrib.auth import login as login_user
+from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
+from .models import Project, Task
+from .forms import AddTask
 
 
 def calcualte_tasks(user, current_week, current_day):
@@ -72,21 +75,60 @@ def previous(request, page):
     if not request.user.is_authenticated:
         return render(request, 'cal/login.html')
     else:
-        time = timezone.now() - datetime.timedelta(days=int(page))
-        current_week = time.isocalendar()[1]
-        current_day = time.day
-        tasks = calcualte_tasks(request.user, current_week, current_day)
-        page_num = int(page)
-        return render(request, 'cal/index.html', {'tasks': tasks, 'page_num': page_num})
+        if int(page) == 0:
+            return redirect('cal:index')
+        else:
+            time = timezone.now() - datetime.timedelta(days=int(page))
+            current_week = time.isocalendar()[1]
+            current_day = time.day
+            tasks = calcualte_tasks(request.user, current_week, current_day)
+            prev_page = int(page) + 1
+            next_page = int(page) - 1
+            return render(request, 'cal/prev.html', {'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page })
 
 
 def next(request, page):
     if not request.user.is_authenticated:
         return render(request, 'cal/login.html')
     else:
-        time = timezone.now() + datetime.timedelta(days=int(page))
-        current_week = time.isocalendar()[1]
-        current_day = time.day
-        tasks = calcualte_tasks(request.user, current_week, current_day)
-        page_num = int(page)
-        return render(request, 'cal/index.html', {'tasks': tasks, 'page_num': page_num })
+        if int(page) == 0:
+            return redirect('cal:index')
+        else:
+            time = timezone.now() + datetime.timedelta(days=int(page))
+            current_week = time.isocalendar()[1]
+            current_day = time.day
+            tasks = calcualte_tasks(request.user, current_week, current_day)
+            prev_page = int(page) - 1
+            next_page = int(page) + 1
+            return render(request, 'cal/next.html', {'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page })
+
+
+def form(request):
+    if not request.user.is_authenticated:
+        return render(request, 'cal/login.html')
+    else:
+        if request.method == 'POST':
+            taskform = AddTask(request.POST)
+            if taskform.is_valid():
+                for i in range(taskform.cleaned_data['multiple_tasks']):
+                    name = taskform.cleaned_data['name']
+                    description = taskform.cleaned_data['description']
+                    to_do_time = taskform.cleaned_data['to_do_time']
+                    start = taskform.cleaned_data['start'] + datetime.timedelta(days=i)
+                    project = Project.objects.get(name=taskform.cleaned_data['project'])
+                    user = User.objects.get(username=taskform.cleaned_data['user'])
+                    Task.objects.create(name=name, 
+                                        description=description,
+                                        to_do_time=to_do_time,
+                                        start=start,
+                                        project=project,
+                                        user=user)
+
+                else:
+                    pass
+                return redirect('cal:form')
+            else:
+                return redirect('cal:form')
+        else:
+            taskform = AddTask()
+            return render(request, 'cal/form.html', {'taskform': taskform})

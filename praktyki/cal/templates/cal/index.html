@@ -13,6 +13,10 @@
     <li><a href="{% url 'cal:index' %}">Calendar</a></li>
     <li><a href="{% url 'week:week_sum' %}">Week View</a></li>
     <li style="float: right"><a href="{% url 'cal:log_out' %}">Logout</a></li>
+    {% block pagination %}
+    <li style="float: right"><a href="{% url 'cal:next' 1 %}">Next</a></li>
+    <li style="float: right"><a href="{% url 'cal:previous' 1 %}">Prev</a></li>
+    {% endblock %}
   </ul>
 </nav>
 <div class="todo">

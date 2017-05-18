@@ -1,0 +1,6 @@
+{% extends 'cal/index.html' %}
+
+{% block pagination %}
+<li style="float: right"><a href="{% url 'cal:previous' next_page %}">Next</a></li>
+<li style="float: right"><a href="{% url 'cal:previous' prev_page %}">Prev</a></li>
+{% endblock %}
