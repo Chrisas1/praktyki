@@ -79,7 +79,7 @@
 </div>
 <script src="/static/cal/wtf.js"></script>
 <script>
-  const events = [ {% for task in tasks %} {start: {{ task.0 }}, end: {{task.1}}, message: "{{ task.2 }}", description: "{{ task.3 }}" }, {% endfor %} ];
+  const events = [ {% for task in tasks %} {start: {{ task.0 }}, end: {{task.1}}, message: "{{ task.2 }}", description: "{{ task.3 }}", container: "{{ task.4 }}"  }, {% endfor %} ];
   layOutDay(events);
 </script>
 {% endblock %}

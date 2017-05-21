@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'cal',
     'week',
     'base',
-    'bootstrap3',
 ]
 
 MIDDLEWARE = [

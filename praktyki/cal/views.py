@@ -9,7 +9,7 @@ from .models import Project, Task
 from .forms import AddTask
 
 
-def calcualte_tasks(user, current_week, current_day):
+def calcualte_tasks(user, current_week, current_day, container):
     user_tasks = user.task_set.all()
     user_week_tasks = [task for task in user_tasks if task.week_number() == current_week]
     user_today_tasks = [task for task in user_week_tasks if task.start.day == current_day]
@@ -17,17 +17,20 @@ def calcualte_tasks(user, current_week, current_day):
     tasks_end = []
     tasks_message = []
     tasks_description = []
+    tasks_containerid = []
     for task in user_today_tasks:
         start_time = timezone.localtime(task.start)
         start = (start_time.hour - 8) * 60 + start_time.minute
         end = start + task.to_do_time * 60
         message = task.name
         description = task.description
+        containerid = container
         tasks_start.append(start)
         tasks_end.append(end)
         tasks_message.append(message)
         tasks_description.append(description)
-    tasks = zip(tasks_start, tasks_end, tasks_message, tasks_description)
+        tasks_containerid.append(containerid)
+    tasks = zip(tasks_start, tasks_end, tasks_message, tasks_description, tasks_containerid)
     return tasks
 
 
@@ -40,7 +43,8 @@ def index(request):
     else:
         current_week = timezone.now().isocalendar()[1]
         current_day = timezone.now().day
-        tasks = calcualte_tasks(request.user, current_week, current_day)
+        container = "events"
+        tasks = calcualte_tasks(request.user, current_week, current_day, container)
         page_num = 0
         return render(request, 'cal/index.html', {'tasks': tasks, 'page_num': page_num})
 
@@ -81,7 +85,8 @@ def previous(request, page):
             time = timezone.now() - datetime.timedelta(days=int(page))
             current_week = time.isocalendar()[1]
             current_day = time.day
-            tasks = calcualte_tasks(request.user, current_week, current_day)
+            container = "events"
+            tasks = calcualte_tasks(request.user, current_week, current_day, container)
             prev_page = int(page) + 1
             next_page = int(page) - 1
             return render(request, 'cal/prev.html', {'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page })
@@ -97,7 +102,8 @@ def next(request, page):
             time = timezone.now() + datetime.timedelta(days=int(page))
             current_week = time.isocalendar()[1]
             current_day = time.day
-            tasks = calcualte_tasks(request.user, current_week, current_day)
+            container = "events"
+            tasks = calcualte_tasks(request.user, current_week, current_day, container)
             prev_page = int(page) - 1
             next_page = int(page) + 1
             return render(request, 'cal/next.html', {'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page })

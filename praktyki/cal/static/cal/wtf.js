@@ -6,7 +6,7 @@ let width = [];
 let leftOffSet = [];
 
 // append one event to calendar
-var createEvent = (height, top, left, units, message, description) => {
+var createEvent = (height, top, left, units, message, description, containerid) => {
 
   let node = document.createElement("DIV");
   node.className = "event";
@@ -17,10 +17,11 @@ var createEvent = (height, top, left, units, message, description) => {
   // Customized CSS to position each event
   node.style.width = (containerWidth/units) + "px";
   node.style.height = height + "px";
-  node.style.top = 210 + top + "px";
-  node.style.left = 100 + left + "px";
+  node.style.top = top + "px";
+  node.style.left = left + "px";
 
-  document.getElementById("events").appendChild(node);
+  
+  document.getElementById(containerid).appendChild(node);
 }
 
 /* 
@@ -124,11 +125,12 @@ myNode.innerHTML = '';
     let end = event.end;
     let start = event.start;
     let units = width[id];
-    let message = event.message
-    let description = event.description
+    let message = event.message;
+    let description = event.description;
+    let containerid = event.container
     if (!units) {units = 1};
     let left = (containerWidth / width[id]) * (leftOffSet[id] - 1) + 10;
     if (!left || left < 0) {left = 10};
-    createEvent(height, top, left, units, message, description);
+    createEvent(height, top, left, units, message, description, containerid);
   });
 }
