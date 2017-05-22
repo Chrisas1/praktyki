@@ -1,0 +1,196 @@
+/* http://meyerweb.com/eric/tools/css/reset/ 
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i,dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed, 
+figure, figcaption, footer, header, hgroup, 
+menu, nav, output, section, summary,
+time, audio {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  font-family: 'Montserrat', sans-serif;
+  color: #D1D1D1;
+}
+
+.container {
+  height:720px;
+  width: 1000px;
+  display: inline-flex;
+}
+
+.timings {
+  text-align: right;
+  padding-right: 10px;
+  width: 100px;
+  height: 720px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: white;
+  font-size: 0.5em;
+  box-sizing: border-box
+}
+
+.timings span {
+  font-size: 200%;
+  color: #696969;
+}
+
+.days {
+  height: 720px;
+  width: 340px;
+  padding: 0px 10px;
+  background-color: #F0F0F0;
+  border-color: #D1D1D1;
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.event {
+  background-color: white;
+  border-style: solid;
+  border-width: 1px;
+  border-left-width: 5px;
+  border-color: #D1D1D1;
+  border-left-color: #57b986;
+  padding-left: 10px;
+  padding-top: 5px;
+  position: absolute;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.event .title {
+  color: #57b986;
+  font-size: 150%;
+}
+.todo
+{
+  margin-left: 100px;
+  width: 620px;
+  height: 150px;
+  background-color: #F0F0F0;
+  border-color: #D1D1D1;
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+.todo li
+{
+  color: #57b986;
+  margin-left: 10px;
+  display: inline-block;
+  padding: 10px;
+  border: 1px solid #57b986;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+.todo li:hover
+{
+  color: #F0F0F0;
+  background-color: #57b986;
+}
+.todo ul li:hover ul {display: block;}
+.todo ul li ul {
+  position: absolute;
+  width: 200px;
+  display: none;
+  min-height: 10px;
+}
+.todo ul li:hover ul
+{
+  display: block;
+}
+.todo ul li ul li
+{
+  color: #57b986;
+  background-color: white;
+  border-radius: 0;
+  border-left: 6px solid #57b986;
+}
+nav {
+    background-color: #fff;
+    border: 1px solid #dedede;
+    border-radius: 4px;
+    box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.055);
+    color: #888;
+    display: block;
+    margin: 0px 22px 2px 22px;
+    overflow: hidden;
+    width: 90%; 
+}
+nav ul 
+{
+    margin: 0;
+    padding: 0;
+}
+nav ul li
+{
+    display: inline-block;
+    list-style-type: none;
+         
+    -webkit-transition: all 0.2s;
+    -moz-transition: all 0.2s;
+    -ms-transition: all 0.2s;
+    -o-transition: all 0.2s;
+    transition: all 0.2s; 
+}
+     
+nav > ul > li > a
+{
+    color: #aaa;
+    display: block;
+    line-height: 56px;
+    padding: 0 24px;
+    text-decoration: none;
+}
+table 
+{
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th, td 
+{
+    text-align: center;
+    padding: 8px;
+    color:#696969;
+}
+th
+{
+color: #57b986;
+}
+
+tr:nth-child(even)
+{
+    background-color: #f8f8f8
+}
+.content
+{
+  min-width: 620px;
+  min-height: 150px;
+  background-color: #F0F0F0;
+  border-color: #D1D1D1;
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  padding-right: 10px;
+}

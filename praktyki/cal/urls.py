@@ -10,4 +10,5 @@ urlpatterns = [
     url(r'^login/$', views.login, name='login'),
     url(r'^logout/$', views.log_out, name='log_out'),
     url(r'^form/$', views.form, name='form'),
+    url(r'^users/(?P<page>-?[0-9]+)/(?P<day>[0-9]+)/$', views.users, name='users'),
 ]

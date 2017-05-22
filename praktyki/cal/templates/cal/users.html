@@ -3,7 +3,7 @@
   {% block title %}Calendar{% endblock %}
   {% block head %}
   {% load static %}
-  <link href="/static/cal/style.css" rel="stylesheet">
+  <link href="/static/cal/userstyle.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
   {% endblock %}
 
@@ -14,28 +14,7 @@
     {% endblock %}
 {% block content %}
 
-<div class="todo">
-  <p>TO-DO</p>
-  <ul>
-    <li>Lorem</li>
 
-    <li>ipsum</li>
-
-    <li>Task1</li>
- 
-    <li>Task2</li>
-
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-
-        
-  </ul>
-</div>
 <div class ="container">
   
   
@@ -67,14 +46,19 @@
     <div> <span> 8:00 </span>PM </div>
     
   </div>
-
-  <div class="days" id="{{ user.username }}">
+{% for u in users %}
+  <div class="days" id="{{ u.username }}">
   </div>
+{% endfor %}
 
 </div>
-<script src="/static/cal/wtf.js"></script>
+<script></script>
+<script src="/static/cal/userscalendar.js"></script>
 <script>
-  const events = [ {% for task in tasks %} {start: {{ task.0 }}, end: {{task.1}}, message: "{{ task.2 }}", description: "{{ task.3 }}", container: "{{ task.4 }}"  }, {% endfor %} ];
+  {% for tasks in users_tasks %}
+  var events = [ {% for task in tasks %} {start: {{ task.0 }}, end: {{task.1}}, message: "{{ task.2 }}", description: "{{ task.3 }}", container: "{{ task.4 }}"  }, {% endfor %} ];
   layOutDay(events);
+  {% endfor %}
+  a = {{ number }};
 </script>
 {% endblock %}

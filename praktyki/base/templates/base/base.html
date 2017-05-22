@@ -8,7 +8,23 @@
         {% block head %}{% endblock %}
     </head>
     <body>
+         {% block nav %}
+<nav>
+  <ul>   
+    <li><a href="{% url 'cal:index' %}">Calendar</a></li>
+    <li><a href="{% url 'week:week_sum' %}">Week View</a></li>
+    {% if user.username == 'admin' %}
+    <li><a href="{% url 'cal:form' %}">Add Task</a></li>
+    {% endif %}
+    {% block add_task %}{% endblock %}
+    <li style="float: right"><a href="{% url 'cal:log_out' %}">Logout</a></li>
+    {% block pagination %}
+    {% endblock %}
+  </ul>
+</nav>
+        {% endblock %}
         {% block content %}
+       
         {% endblock %}
       
     </body>

@@ -8,7 +8,11 @@
         <link href="/static/cal/login.css" rel="stylesheet">
 {% endblock %}
 
+{% block nav %}
+{% endblock %}
+
 {% block content %}
+
         {% if logged_out %}
             <p class="success">{{ logged_out }}</p>
         {% endif %}
