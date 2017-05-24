@@ -7,6 +7,9 @@ from django.utils import timezone
 import datetime
 from .models import Project, Task
 from .forms import AddTask
+from django.conf import settings
+
+users_number = settings.USERS
 
 
 def calcualte_tasks(user, current_week, current_day):
@@ -41,11 +44,12 @@ def index(request):
     if not request.user.is_authenticated:
         return render(request, 'cal/login.html')
     else:
+        kierownik = request.user.groups.filter(name="Kierownik").exists()
         current_week = timezone.now().isocalendar()[1]
         current_day = timezone.now().day
         tasks = calcualte_tasks(request.user, current_week, current_day)
         page_num = 0
-        return render(request, 'cal/index.html', {'user': request.user, 'tasks': tasks, 'page_num': page_num})
+        return render(request, 'cal/index.html', {'user': request.user, 'tasks': tasks, 'page_num': page_num, 'kierownik': kierownik})
 
 
 def login(request):
@@ -81,13 +85,14 @@ def previous(request, page):
         if int(page) == 0:
             return redirect('cal:index')
         else:
+            kierownik = request.user.groups.filter(name="Kierownik").exists()
             time = timezone.now() - datetime.timedelta(days=int(page))
             current_week = time.isocalendar()[1]
             current_day = time.day
             tasks = calcualte_tasks(request.user, current_week, current_day)
             prev_page = int(page) + 1
             next_page = int(page) - 1
-            return render(request, 'cal/prev.html', {'user': request.user, 'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page })
+            return render(request, 'cal/prev.html', {'user': request.user, 'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page, 'kierownik': kierownik })
 
 
 def next(request, page):
@@ -97,13 +102,14 @@ def next(request, page):
         if int(page) == 0:
             return redirect('cal:index')
         else:
+            kierownik = request.user.groups.filter(name="Kierownik").exists()
             time = timezone.now() + datetime.timedelta(days=int(page))
             current_week = time.isocalendar()[1]
             current_day = time.day
             tasks = calcualte_tasks(request.user, current_week, current_day)
             prev_page = int(page) - 1
             next_page = int(page) + 1
-            return render(request, 'cal/next.html', {'user': request.user, 'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page })
+            return render(request, 'cal/next.html', {'user': request.user, 'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page, 'kierownik': kierownik })
 
 
 def form(request):
@@ -137,20 +143,85 @@ def form(request):
             return render(request, 'cal/form.html', {'taskform': taskform})
 
 
-def users(request, page, day):
+def users(request, user_page):
     """
-    View check if user is logged in, if not redirect to login page.
+    View display all users stats.
     """
     if not request.user.is_authenticated:
         return render(request, 'cal/login.html')
     else:
         current_week = timezone.now().isocalendar()[1]
         current_day = timezone.now().day
-        page = 1
-        users = User.objects.all()[0*page:4*page]
+        user_page = int(user_page)
+        users = User.objects.all()[users_number * (user_page - 1):users_number * user_page]
         users_tasks = []
         for user in users:
             tasks = calcualte_tasks(user, current_week, current_day)
             users_tasks.append(tasks)
-        page_num = 0
-        return render(request, 'cal/users.html', {'user': request.user,'users_tasks': users_tasks, 'users': users, 'page_num': page_num, 'number': page})
+        if user_page > 1:
+            prev_user_page = user_page - 1
+        else:
+            prev_user_page = 1
+        user_pages = [prev_user_page, user_page, user_page + 1]
+        kierownik = request.user.groups.filter(name="Kierownik").exists()
+        return render(request, 'cal/users.html', {'users_tasks': users_tasks, 'users': users, 'user_pages': user_pages, 'kierownik': kierownik})
+
+
+def next_users(request, page, user_page):
+    """
+    View display all users stats.
+    """
+    if not request.user.is_authenticated:
+        return render(request, 'cal/login.html')
+    else:
+        if int(page) == 0:
+            return redirect('cal:users', user_page)
+        else:
+            time = timezone.now() + datetime.timedelta(days=int(page))
+            current_week = time.isocalendar()[1]
+            current_day = time.day
+            user_page = int(user_page)
+            users = User.objects.all()[users_number * (user_page - 1):users_number * user_page]
+            users_tasks = []
+            for user in users:
+                tasks = calcualte_tasks(user, current_week, current_day)
+                users_tasks.append(tasks)
+            page = int(page)
+            pages = [page + 1, page, page - 1]
+            if user_page > 1:
+                prev_user_page = user_page - 1
+            else:
+                prev_user_page = 1
+            user_pages = [prev_user_page, user_page, user_page + 1]
+            kierownik = request.user.groups.filter(name="Kierownik").exists()
+            return render(request, 'cal/next_users.html', {'users_tasks': users_tasks, 'users': users, 'pages': pages, 'user_pages': user_pages, 'kierownik': kierownik })
+
+
+def prev_users(request, page, user_page):
+    """
+    View display all users stats.
+    """
+    if not request.user.is_authenticated:
+        return render(request, 'cal/login.html')
+    else:
+        if int(page) == 0:
+            return redirect('cal:users', user_page)
+        else:
+            time = timezone.now() - datetime.timedelta(days=int(page))
+            current_week = time.isocalendar()[1]
+            current_day = time.day
+            user_page = int(user_page)
+            users = User.objects.all()[users_number * (user_page - 1):users_number * user_page]
+            users_tasks = []
+            for user in users:
+                tasks = calcualte_tasks(user, current_week, current_day)
+                users_tasks.append(tasks)
+            page = int(page)
+            pages = [page - 1, page, page + 1]
+            if user_page > 1:
+                prev_user_page = user_page - 1
+            else:
+                prev_user_page = 1
+            user_pages = [prev_user_page, user_page, user_page + 1]
+            kierownik = request.user.groups.filter(name="Kierownik").exists()
+            return render(request, 'cal/prev_users.html', {'users_tasks': users_tasks, 'users': users, 'pages': pages, 'user_pages': user_pages, 'kierownik': kierownik })

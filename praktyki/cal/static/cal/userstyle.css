@@ -29,6 +29,7 @@ time, audio {
   height:720px;
   width: 1000px;
   display: inline-flex;
+
 }
 
 .timings {
@@ -193,4 +194,42 @@ tr:nth-child(even)
   box-sizing: border-box;
   padding-left: 10px;
   padding-right: 10px;
+}
+
+.user_description
+{
+  
+  width: 340px;
+  height: 48px;
+  background-color: #F0F0F0;
+  border-color: #D1D1D1;
+  border-style: solid;
+  border-width: 1px;
+  box-sizing: border-box;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: center;
+  color: #57b986;
+  padding-top: 10px;  
+  font-size: 150%;
+  float: left;
+
+}
+.user_container
+{
+  height: 50px;
+  width: 1460px;
+  padding-left: 100px;
+  overflow: hidden;
+
+  
+}
+.button
+{
+  background-color: #F0F0F0;
+  color: #57b986;
+  border: #D1D1D1 solid 1px;
+  margin-right: 20px;
+  display: inline-block;
+  padding: 10px;
 }

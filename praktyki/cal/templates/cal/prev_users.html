@@ -1,0 +1,13 @@
+{% extends 'cal/users.html' %}
+
+{% block pagination %}
+<li style="float: right"><a href="{% url 'cal:prev_users' pages.0 user_pages.1 %}">Next</a></li>
+<li style="float: right"><a href="{% url 'cal:prev_users' pages.2 user_pages.1 %}">Prev</a></li>
+{% endblock %}
+
+{% block users %}
+<div class="user_container">
+  <a class="button" href="{% url 'cal:prev_users' pages.1 user_pages.0 %}" >Prev Users</a>
+  <a class="button" href="{% url 'cal:prev_users' pages.1 user_pages.2 %}" >Next Users</a>
+</div>
+{% endblock %}

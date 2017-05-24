@@ -8,12 +8,13 @@
         {% block head %}{% endblock %}
     </head>
     <body>
+        
          {% block nav %}
 <nav>
   <ul>   
     <li><a href="{% url 'cal:index' %}">Calendar</a></li>
     <li><a href="{% url 'week:week_sum' %}">Week View</a></li>
-    {% if user.username == 'admin' %}
+    {% if kierownik %}
     <li><a href="{% url 'cal:form' %}">Add Task</a></li>
     {% endif %}
     {% block add_task %}{% endblock %}
@@ -26,6 +27,6 @@
         {% block content %}
        
         {% endblock %}
-      
+    
     </body>
 </html>

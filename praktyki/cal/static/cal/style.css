@@ -194,3 +194,13 @@ tr:nth-child(even)
   padding-left: 10px;
   padding-right: 10px;
 }
+
+input
+{
+  width: 400px;
+}
+form
+{
+  width: 400px;
+  text-align: center;
+}

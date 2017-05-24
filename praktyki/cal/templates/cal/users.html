@@ -9,11 +9,18 @@
 
     
     {% block pagination %}
-    <li style="float: right"><a href="{% url 'cal:next' 1 %}">Next</a></li>
-    <li style="float: right"><a href="{% url 'cal:previous' 1 %}">Prev</a></li>
+    <li style="float: right"><a href="{% url 'cal:next_users' 1 user_pages.1 %}">Next</a></li>
+    <li style="float: right"><a href="{% url 'cal:prev_users' 1 user_pages.1 %}">Prev</a></li>
     {% endblock %}
 {% block content %}
-
+<div>
+<div class="user_container">
+  {% for user in users %}
+  <div class="user_description">
+    {{ user.username }}
+  </div>
+    {% endfor %}
+</div>
 
 <div class ="container">
   
@@ -52,6 +59,13 @@
 {% endfor %}
 
 </div>
+{% block users %}
+<div class="user_container">
+  <a class="button" href="{% url 'cal:users' user_pages.0 %}" >Prev Users</a>
+  <a class="button" href="{% url 'cal:users' user_pages.2 %}" >Next Users</a>
+</div>
+{% endblock %}
+</div>
 <script></script>
 <script src="/static/cal/userscalendar.js"></script>
 <script>
@@ -59,6 +73,5 @@
   var events = [ {% for task in tasks %} {start: {{ task.0 }}, end: {{task.1}}, message: "{{ task.2 }}", description: "{{ task.3 }}", container: "{{ task.4 }}"  }, {% endfor %} ];
   layOutDay(events);
   {% endfor %}
-  a = {{ number }};
 </script>
 {% endblock %}
