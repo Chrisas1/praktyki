@@ -8,6 +8,7 @@ import datetime
 from .models import Project, Task
 from .forms import AddTask
 from django.conf import settings
+import pytz
 
 users_number = settings.USERS
 
@@ -111,6 +112,15 @@ def next(request, page):
             next_page = int(page) + 1
             return render(request, 'cal/next.html', {'user': request.user, 'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page, 'kierownik': kierownik })
 
+def calculate_task_time(date, user):
+    daytasks = user.task_set.filter(start__day=date.day,start__month=date.month, start__year=date.year)
+    if daytasks:
+        task_time = 0
+        for task in daytasks:
+            task_time += task.to_do_time
+        return task_time
+    else:
+        return 0
 
 def form(request):
     if not request.user.is_authenticated:
@@ -119,22 +129,56 @@ def form(request):
         if request.method == 'POST':
             taskform = AddTask(request.POST)
             if taskform.is_valid():
+                utc = pytz.timezone("UTC")
+                local = timezone.localtime(timezone.now()).tzinfo
                 for i in range(taskform.cleaned_data['multiple_tasks']):
+                    divided_task = []
                     name = taskform.cleaned_data['name']
                     description = taskform.cleaned_data['description']
                     to_do_time = taskform.cleaned_data['to_do_time']
-                    start = taskform.cleaned_data['start'] + datetime.timedelta(days=i)
+                    date = taskform.cleaned_data['start'] + datetime.timedelta(days=i)
                     project = Project.objects.get(name=taskform.cleaned_data['project'])
                     user = User.objects.get(username=taskform.cleaned_data['user'])
-                    Task.objects.create(name=name, 
-                                        description=description,
-                                        to_do_time=to_do_time,
-                                        start=start,
-                                        project=project,
-                                        user=user)
-
-                else:
-                    pass
+                    task_time = calculate_task_time(date, user)
+                    if task_time > 0: #check if there any tasks for that day 
+                        start_hour = 8 + task_time
+                        if task_time + to_do_time <= 12: #check if there is a space for task
+                            start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=start_hour, tzinfo=local)
+                            start = utc.normalize(start.astimezone(utc))
+                        else: 
+                            i = 0
+                            while to_do_time > 0:
+                                if task_time < 12:
+                                    to_do_time_part = 12 - task_time
+                                    if to_do_time_part > to_do_time:
+                                        to_do_time_part = to_do_time
+                                    to_do_time -= to_do_time_part
+                                    hour = 8 + task_time
+                                    task_time += to_do_time_part
+                                    divided_task.append((hour,to_do_time_part,i))
+                                else:
+                                    i += 1
+                                    task_time = calculate_task_time(date + datetime.timedelta(days=i), user)
+                    else: #if not set task start at 8 am
+                        start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=8, tzinfo=local)
+                        start = utc.normalize(start.astimezone(utc))
+                    if not divided_task:
+                        Task.objects.create(name=name, 
+                                            description=description,
+                                            to_do_time=to_do_time,
+                                            start=start,
+                                            project=project,
+                                            user=user)
+                    else:
+                        for div_task in divided_task:
+                            start = datetime.datetime(year=date.year, month=date.month, day=date.day + div_task[2], hour=div_task[0], tzinfo=local)
+                            start = utc.normalize(start.astimezone(utc))
+                            Task.objects.create(name=name,
+                                                description=description,
+                                                to_do_time=div_task[1],
+                                                start=start,
+                                                project=project,
+                                                user=user)
                 return redirect('cal:form')
             else:
                 return redirect('cal:form')

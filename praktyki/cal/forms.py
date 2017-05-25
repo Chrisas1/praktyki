@@ -12,7 +12,7 @@ class AddTask(forms.Form):
     name = forms.CharField(label='Task name', max_length=100)
     description = forms.CharField(label='Description', max_length=12, required=False)
     to_do_time = forms.IntegerField(label='To do time')
-    start = forms.DateTimeField(label='Start time', input_formats=['%Y-%m-%d %H:%M:%S'], initial=timezone.now())
+    start = forms.DateField(label='Day', input_formats=['%Y-%m-%d'], initial=timezone.now())
     project = forms.ChoiceField(label='Project', choices=project_choices)
     user = forms.ChoiceField(label='User', choices=user_choices)
     multiple_tasks = forms.IntegerField(label='Multiple Tasks', initial=1)
