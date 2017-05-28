@@ -139,13 +139,14 @@ def form(request):
                     date = taskform.cleaned_data['start'] + datetime.timedelta(days=i)
                     project = Project.objects.get(name=taskform.cleaned_data['project'])
                     user = User.objects.get(username=taskform.cleaned_data['user'])
+                    week_day = date.isocalendar()[2]
                     task_time = calculate_task_time(date, user)
                     if task_time > 0: #check if there any tasks for that day 
                         start_hour = 8 + task_time
                         if task_time + to_do_time <= 12: #check if there is a space for task
                             start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=start_hour, tzinfo=local)
                             start = utc.normalize(start.astimezone(utc))
-                        else: 
+                        else: #if not
                             i = 0
                             while to_do_time > 0:
                                 if task_time < 12:
@@ -155,11 +156,17 @@ def form(request):
                                     to_do_time -= to_do_time_part
                                     hour = 8 + task_time
                                     task_time += to_do_time_part
+                                    if (week_day + i) % 7 == 6:
+                                        i += 2
+                                    elif (week_day + i) % 7 == 0:
+                                        i += 1
                                     divided_task.append((hour,to_do_time_part,i))
                                 else:
                                     i += 1
                                     task_time = calculate_task_time(date + datetime.timedelta(days=i), user)
-                    else: #if not set task start at 8 am
+                    elif week_day==6 or week_day==7: #if not set task start at 8 am
+                        pass                        
+                    else:
                         start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=8, tzinfo=local)
                         start = utc.normalize(start.astimezone(utc))
                     if not divided_task:
