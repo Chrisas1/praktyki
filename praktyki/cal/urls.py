@@ -13,4 +13,5 @@ urlpatterns = [
     url(r'^users/(?P<user_page>[0-9]+)/$', views.users, name='users'),
     url(r'^next_users/(?P<page>[0-9]+)/(?P<user_page>[0-9]+)/$', views.next_users, name='next_users'),
     url(r'^prev_users/(?P<page>[0-9]+)/(?P<user_page>[0-9]+)/$', views.prev_users, name='prev_users'),
+    url(r'^testindex/$', views.calendar, name='calendar'),
 ]

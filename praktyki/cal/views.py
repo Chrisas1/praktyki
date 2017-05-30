@@ -37,6 +37,28 @@ def calcualte_tasks(user, current_week, current_day):
     tasks = zip(tasks_start, tasks_end, tasks_message, tasks_description, tasks_containerid)
     return tasks
 
+def calcualte_calendar_tasks(user):
+    user_tasks = user.task_set.all()
+    titles = []
+    tasks_start = []
+    tasks_end = []
+    for task in user_tasks:
+        start_time = timezone.localtime(task.start)
+        end_time = start_time + datetime.timedelta(hours=task.to_do_time)
+        title = task.name
+        titles.append(title)
+        tasks_start.append(start_time.strftime("%Y-%m-%dT%H:%M:%S"))
+        tasks_end.append(end_time.strftime("%Y-%m-%dT%H:%M:%S"))
+    tasks = zip(titles, tasks_start, tasks_end)
+    return tasks
+
+def calendar(request):
+    if not request.user.is_authenticated:
+        return render(request, 'cal/login.html')
+    else:
+        tasks = calcualte_calendar_tasks(request.user)
+        date = timezone.now().date().strftime("%Y-%m-%d")
+        return render(request, 'cal/testindex.html', {'tasks': tasks, 'date': date})
 
 def index(request):
     """
