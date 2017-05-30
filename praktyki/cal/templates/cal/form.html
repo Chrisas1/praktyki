@@ -13,4 +13,7 @@
     {{ taskform }}
     <input type="submit" value="Submit"/>
 </form>
+{% if error_msg %}
+    <p style="color: red;">{{ error_msg }}</p>
+{% endif %}
 {% endblock %}

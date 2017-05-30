@@ -45,3 +45,10 @@ class Task(models.Model):
         Return week number of task starting time.
         """
         return self.start.isocalendar()[1]
+
+    
+class Day(models.Model):
+    """
+    Free days
+    """
+    day = models.DateField()

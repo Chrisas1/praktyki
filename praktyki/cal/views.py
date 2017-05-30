@@ -5,7 +5,7 @@ from django.contrib.auth import login as login_user
 from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
-from .models import Project, Task
+from .models import Project, Task, Day
 from .forms import AddTask
 from django.conf import settings
 import pytz
@@ -141,14 +141,17 @@ def form(request):
                     user = User.objects.get(username=taskform.cleaned_data['user'])
                     week_day = date.isocalendar()[2]
                     task_time = calculate_task_time(date, user)
-                    if task_time > 0: #check if there any tasks for that day 
+                    if task_time > 0 or to_do_time > 12: #check if there any tasks for that day 
                         start_hour = 8 + task_time
                         if task_time + to_do_time <= 12: #check if there is a space for task
                             start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=start_hour, tzinfo=local)
                             start = utc.normalize(start.astimezone(utc))
                         else: #if not
-                            i = 0
+                            x = 0
                             while to_do_time > 0:
+                                while Day.objects.filter(day=date + datetime.timedelta(days=x)).exists() or (week_day + x) % 7 == 6 or (week_day + x) % 7 == 0:
+                                        x += 1
+                                task_time = calculate_task_time(date + datetime.timedelta(days=x), user)        
                                 if task_time < 12:
                                     to_do_time_part = 12 - task_time
                                     if to_do_time_part > to_do_time:
@@ -156,16 +159,15 @@ def form(request):
                                     to_do_time -= to_do_time_part
                                     hour = 8 + task_time
                                     task_time += to_do_time_part
-                                    if (week_day + i) % 7 == 6:
-                                        i += 2
-                                    elif (week_day + i) % 7 == 0:
-                                        i += 1
-                                    divided_task.append((hour,to_do_time_part,i))
+                                    
+                                    divided_task.append((hour,to_do_time_part,x))
                                 else:
-                                    i += 1
-                                    task_time = calculate_task_time(date + datetime.timedelta(days=i), user)
-                    elif week_day==6 or week_day==7: #if not set task start at 8 am
-                        pass                        
+                                    x += 1
+                                    while Day.objects.filter(day=date + datetime.timedelta(days=x)).exists() or (week_day + x) % 7 == 6 or (week_day + x) % 7 == 0:
+                                        x += 1
+                                    task_time = calculate_task_time(date + datetime.timedelta(days=x), user)
+                    elif week_day==6 or week_day==7 or Day.objects.filter(day=date).exists(): #if it's weekend or free day
+                        return render(request, 'cal/form.html', {'taskform': taskform, 'error_msg': "Nie można dodać zadania na weekend albo swieta"})                 
                     else:
                         start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=8, tzinfo=local)
                         start = utc.normalize(start.astimezone(utc))
@@ -178,7 +180,7 @@ def form(request):
                                             user=user)
                     else:
                         for div_task in divided_task:
-                            start = datetime.datetime(year=date.year, month=date.month, day=date.day + div_task[2], hour=div_task[0], tzinfo=local)
+                            start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=div_task[0], tzinfo=local) + datetime.timedelta(days=div_task[2])
                             start = utc.normalize(start.astimezone(utc))
                             Task.objects.create(name=name,
                                                 description=description,

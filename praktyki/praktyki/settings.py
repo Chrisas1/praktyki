@@ -124,3 +124,5 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 USERS = 4
+START_HOUR = 8 #min 8
+MAX_HOURS = 12 #max number of hours per day
