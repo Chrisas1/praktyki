@@ -1,80 +1,62 @@
 {% extends 'base/base.html' %}
-
-  {% block title %}Calendar{% endblock %}
-  {% block head %}
-  {% load static %}
-  <link href="/static/cal/style.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
-  {% endblock %}
-
-    
-    {% block pagination %}
-    <li style="float: right"><a href="{% url 'cal:next' 1 %}">Next</a></li>
-    <li style="float: right"><a href="{% url 'cal:previous' 1 %}">Prev</a></li>
-    {% endblock %}
-{% block content %}
-
-<div class="todo">
-  <p>TO-DO</p>
-  <ul>
-    <li>Lorem</li>
-
-    <li>ipsum</li>
-
-    <li>Task1</li>
- 
-    <li>Task2</li>
-
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-    <li>Task2</li>
-
-        
-  </ul>
-</div>
-<div class ="container">
-  
-  
-  <div class="timings">
-    <div> <span> 8:00 </span>AM </div>
-    <div> 8:30 </div>
-    <div> <span> 9:00 </span> AM </div>
-    <div> 9:30 </div>
-    <div> <span> 10:00 </span>AM </div>
-    <div> 10:30 </div>
-    <div> <span> 11:00 </span>AM </div>
-    <div> 11:30 </div>
-    <div> <span> 12:00 </span>PM </div>
-    <div> 12:30 </div>
-    <div> <span> 1:00 </span>PM </div>
-    <div> 1:30 </div>
-    <div> <span> 2:00 </span>PM </div>
-    <div> 2:30 </div>
-    <div> <span> 3:00 </span>PM </div>
-    <div> 3:30 </div>
-    <div> <span> 4:00 </span>PM </div>
-    <div> 4:30 </div>
-    <div> <span> 5:00 </span>PM </div>
-    <div> 5:30 </div>
-    <div> <span> 6:00 </span>PM </div>
-    <div> 6:30 </div>
-    <div> <span> 7:00 </span>PM </div>
-    <div> 7:30 </div>
-    <div> <span> 8:00 </span>PM </div>
-    
-  </div>
-
-  <div class="days" id="{{ user.username }}">
-  </div>
-
-</div>
-<script src="/static/cal/wtf.js"></script>
+{% block head %}
+<meta charset='utf-8' />
+{% load static %}
+<link href='/static/cal/fullcalendar.min.css' rel='stylesheet' />
+<link href='/static/cal/fullcalendar.print.min.css' rel='stylesheet' media='print' />
+<link href="/static/cal/style.css" rel="stylesheet">
+<script src='/static/cal/lib/moment.min.js'></script>
+<script src='/static/cal/lib/jquery.min.js'></script>
+<script src='/static/cal/fullcalendar.min.js'></script>
 <script>
-  const events = [ {% for task in tasks %} {start: {{ task.0 }}, end: {{task.1}}, message: "{{ task.2 }}", description: "{{ task.3 }}", container: "{{ task.4 }}"  }, {% endfor %} ];
-  layOutDay(events);
+
+	$(document).ready(function() {
+		
+		$('#calendar').fullCalendar({
+			header: {
+				left: 'prev,next today',
+				center: 'title',
+				right: 'month,agendaWeek,agendaDay,listWeek'
+			},
+			defaultDate: '{{ date }}',
+			navLinks: true, // can click day/week names to navigate views
+			editable: false,
+			eventLimit: true, // allow "more" link when too many events
+			events: [
+                {% for task in tasks %}
+				{
+					title: '{{ task.0 }}',
+					start: '{{ task.1 }}',
+                    end: '{{ task.2 }}'
+				},
+				{% endfor %}
+			]
+		});
+		
+	});
+
 </script>
+<style>
+
+	body {
+		
+		padding: 0;
+		font-family: "Lucida Grande",Helvetica,Arial,Verdana,sans-serif;
+		font-size: 100%;
+	}
+
+	#calendar {
+		max-width: 900px;
+		margin: 0 auto;
+	}
+
+</style>
+{% endblock %}
+{% block content %}
+	<div id='calendar'></div>
+	<form action="{% url 'cal:index' %}" method="POST">
+    {% csrf_token %}
+    {{ form }}
+    <input style="width: 100px;"type="submit" value="Submit"/>
+</form>
 {% endblock %}

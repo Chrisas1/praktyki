@@ -6,11 +6,13 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 import datetime
 from .models import Project, Task, Day
-from .forms import AddTask
+from .forms import AddTask, CalendarForm
 from django.conf import settings
 import pytz
 
 users_number = settings.USERS
+
+
 
 
 def calcualte_tasks(user, current_week, current_day):
@@ -52,27 +54,27 @@ def calcualte_calendar_tasks(user):
     tasks = zip(titles, tasks_start, tasks_end)
     return tasks
 
-def calendar(request):
-    if not request.user.is_authenticated:
-        return render(request, 'cal/login.html')
-    else:
-        tasks = calcualte_calendar_tasks(request.user)
-        date = timezone.now().date().strftime("%Y-%m-%d")
-        return render(request, 'cal/testindex.html', {'tasks': tasks, 'date': date})
-
 def index(request):
-    """
-    View check if user is logged in, if not redirect to login page.
-    """
     if not request.user.is_authenticated:
         return render(request, 'cal/login.html')
     else:
-        kierownik = request.user.groups.filter(name="Kierownik").exists()
-        current_week = timezone.now().isocalendar()[1]
-        current_day = timezone.now().day
-        tasks = calcualte_tasks(request.user, current_week, current_day)
-        page_num = 0
-        return render(request, 'cal/index.html', {'user': request.user, 'tasks': tasks, 'page_num': page_num, 'kierownik': kierownik})
+        if request.method == 'POST':
+            form = CalendarForm(request.POST)
+            if form.is_valid():
+                user = User.objects.get(username=form.cleaned_data['user'])
+                tasks = calcualte_calendar_tasks(user)
+                date = timezone.now().date().strftime("%Y-%m-%d")
+                kierownik = request.user.groups.filter(name="Kierownik").exists()
+                return render(request, 'cal/index.html', {'tasks': tasks, 'date': date, 'kierownik': kierownik, 'form': form})
+
+            else:
+                return redirect('cal:index')
+        else:
+            tasks = calcualte_calendar_tasks(request.user)
+            date = timezone.now().date().strftime("%Y-%m-%d")
+            kierownik = request.user.groups.filter(name="Kierownik").exists()
+            form = CalendarForm()
+        return render(request, 'cal/index.html', {'tasks': tasks, 'date': date, 'kierownik': kierownik, 'form': form})
 
 
 def login(request):
@@ -101,39 +103,6 @@ def log_out(request):
     return render(request, 'cal/login.html', {'logged_out': "Zostałeś wylogowany"})
 
 
-def previous(request, page):
-    if not request.user.is_authenticated:
-        return render(request, 'cal/login.html')
-    else:
-        if int(page) == 0:
-            return redirect('cal:index')
-        else:
-            kierownik = request.user.groups.filter(name="Kierownik").exists()
-            time = timezone.now() - datetime.timedelta(days=int(page))
-            current_week = time.isocalendar()[1]
-            current_day = time.day
-            tasks = calcualte_tasks(request.user, current_week, current_day)
-            prev_page = int(page) + 1
-            next_page = int(page) - 1
-            return render(request, 'cal/prev.html', {'user': request.user, 'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page, 'kierownik': kierownik })
-
-
-def next(request, page):
-    if not request.user.is_authenticated:
-        return render(request, 'cal/login.html')
-    else:
-        if int(page) == 0:
-            return redirect('cal:index')
-        else:
-            kierownik = request.user.groups.filter(name="Kierownik").exists()
-            time = timezone.now() + datetime.timedelta(days=int(page))
-            current_week = time.isocalendar()[1]
-            current_day = time.day
-            tasks = calcualte_tasks(request.user, current_week, current_day)
-            prev_page = int(page) - 1
-            next_page = int(page) + 1
-            return render(request, 'cal/next.html', {'user': request.user, 'tasks': tasks, 'prev_page': prev_page, 'next_page': next_page, 'kierownik': kierownik })
-
 def calculate_task_time(date, user):
     daytasks = user.task_set.filter(start__day=date.day,start__month=date.month, start__year=date.year)
     if daytasks:
@@ -161,11 +130,13 @@ def form(request):
                     date = taskform.cleaned_data['start'] + datetime.timedelta(days=i)
                     project = Project.objects.get(name=taskform.cleaned_data['project'])
                     user = User.objects.get(username=taskform.cleaned_data['user'])
+                    max_hours_per_day = user.worker.max_hours
+                    starting_hour = user.worker.start_hour
                     week_day = date.isocalendar()[2]
                     task_time = calculate_task_time(date, user)
-                    if task_time > 0 or to_do_time > 12: #check if there any tasks for that day 
-                        start_hour = 8 + task_time
-                        if task_time + to_do_time <= 12: #check if there is a space for task
+                    if task_time > 0 or to_do_time > max_hours_per_day: #check if there any tasks for that day 
+                        start_hour = starting_hour + task_time
+                        if task_time + to_do_time <= max_hours_per_day: #check if there is a space for task
                             start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=start_hour, tzinfo=local)
                             start = utc.normalize(start.astimezone(utc))
                         else: #if not
@@ -173,13 +144,14 @@ def form(request):
                             while to_do_time > 0:
                                 while Day.objects.filter(day=date + datetime.timedelta(days=x)).exists() or (week_day + x) % 7 == 6 or (week_day + x) % 7 == 0:
                                         x += 1
-                                task_time = calculate_task_time(date + datetime.timedelta(days=x), user)        
-                                if task_time < 12:
-                                    to_do_time_part = 12 - task_time
+                                        task_time = calculate_task_time(date + datetime.timedelta(days=x), user)    
+                                    
+                                if task_time < max_hours_per_day:
+                                    to_do_time_part = max_hours_per_day - task_time
                                     if to_do_time_part > to_do_time:
                                         to_do_time_part = to_do_time
                                     to_do_time -= to_do_time_part
-                                    hour = 8 + task_time
+                                    hour = starting_hour + task_time
                                     task_time += to_do_time_part
                                     
                                     divided_task.append((hour,to_do_time_part,x))
@@ -191,7 +163,7 @@ def form(request):
                     elif week_day==6 or week_day==7 or Day.objects.filter(day=date).exists(): #if it's weekend or free day
                         return render(request, 'cal/form.html', {'taskform': taskform, 'error_msg': "Nie można dodać zadania na weekend albo swieta"})                 
                     else:
-                        start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=8, tzinfo=local)
+                        start = datetime.datetime(year=date.year, month=date.month, day=date.day, hour=starting_hour, tzinfo=local)
                         start = utc.normalize(start.astimezone(utc))
                     if not divided_task:
                         Task.objects.create(name=name, 

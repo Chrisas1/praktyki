@@ -13,7 +13,8 @@
 <nav>
   <ul>   
     <li><a href="{% url 'cal:index' %}">Calendar</a></li>
-    <li><a href="{% url 'week:week_sum' %}">Week View</a></li>
+    <li><a href="{% url 'cal:users' 1%}">Week View</a></li>
+    <li><a href="{% url 'week:week_sum' %}">Hours</a></li>
     {% if kierownik %}
     <li><a href="{% url 'cal:form' %}">Add Task</a></li>
     {% endif %}

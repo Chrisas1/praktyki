@@ -10,6 +10,8 @@ class Worker(models.Model):
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     hours_per_week = models.IntegerField()
+    start_hour = models.IntegerField(default=8)
+    max_hours = models.IntegerField(default=12)
 
     def tasks_hours(self, week_number):
         """

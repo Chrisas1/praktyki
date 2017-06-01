@@ -16,3 +16,6 @@ class AddTask(forms.Form):
     project = forms.ChoiceField(label='Project', choices=project_choices)
     user = forms.ChoiceField(label='User', choices=user_choices)
     multiple_tasks = forms.IntegerField(label='Multiple Tasks', initial=1)
+
+class CalendarForm(forms.Form):
+    user = forms.ChoiceField(label='User', choices=user_choices)
