@@ -15,7 +15,10 @@ users_number = settings.USERS
 
 
 
-def calcualte_tasks(user, current_week, current_day):
+def calculate_tasks(user, current_week, current_day):
+    """
+    Calculate tasks for all users view.
+    """
     user_tasks = user.task_set.all()
     user_week_tasks = [task for task in user_tasks if task.week_number() == current_week]
     user_today_tasks = [task for task in user_week_tasks if task.start.day == current_day]
@@ -39,7 +42,10 @@ def calcualte_tasks(user, current_week, current_day):
     tasks = zip(tasks_start, tasks_end, tasks_message, tasks_description, tasks_containerid)
     return tasks
 
-def calcualte_calendar_tasks(user):
+def calculate_calendar_tasks(user):
+    """
+    Calculate tasks for calendar view.
+    """
     user_tasks = user.task_set.all()
     titles = []
     tasks_start = []
@@ -55,6 +61,9 @@ def calcualte_calendar_tasks(user):
     return tasks
 
 def index(request):
+    """
+    Display calendar with user tasks.
+    """
     if not request.user.is_authenticated:
         return render(request, 'cal/login.html')
     else:
@@ -62,7 +71,7 @@ def index(request):
             form = CalendarForm(request.POST)
             if form.is_valid():
                 user = User.objects.get(username=form.cleaned_data['user'])
-                tasks = calcualte_calendar_tasks(user)
+                tasks = calculate_calendar_tasks(user)
                 date = timezone.now().date().strftime("%Y-%m-%d")
                 kierownik = request.user.groups.filter(name="Kierownik").exists()
                 return render(request, 'cal/index.html', {'tasks': tasks, 'date': date, 'kierownik': kierownik, 'form': form})
@@ -70,7 +79,7 @@ def index(request):
             else:
                 return redirect('cal:index')
         else:
-            tasks = calcualte_calendar_tasks(request.user)
+            tasks = calculate_calendar_tasks(request.user)
             date = timezone.now().date().strftime("%Y-%m-%d")
             kierownik = request.user.groups.filter(name="Kierownik").exists()
             form = CalendarForm()
@@ -104,6 +113,9 @@ def log_out(request):
 
 
 def calculate_task_time(date, user):
+    """
+    Returns how many hours are spend.
+    """
     daytasks = user.task_set.filter(start__day=date.day,start__month=date.month, start__year=date.year)
     if daytasks:
         task_time = 0
@@ -114,6 +126,9 @@ def calculate_task_time(date, user):
         return 0
 
 def form(request):
+    """
+    View adds tasks.
+    """
     if not request.user.is_authenticated:
         return render(request, 'cal/login.html')
     else:
@@ -203,7 +218,7 @@ def users(request, user_page):
         users = User.objects.all()[users_number * (user_page - 1):users_number * user_page]
         users_tasks = []
         for user in users:
-            tasks = calcualte_tasks(user, current_week, current_day)
+            tasks = calculate_tasks(user, current_week, current_day)
             users_tasks.append(tasks)
         if user_page > 1:
             prev_user_page = user_page - 1
@@ -231,7 +246,7 @@ def next_users(request, page, user_page):
             users = User.objects.all()[users_number * (user_page - 1):users_number * user_page]
             users_tasks = []
             for user in users:
-                tasks = calcualte_tasks(user, current_week, current_day)
+                tasks = calculate_tasks(user, current_week, current_day)
                 users_tasks.append(tasks)
             page = int(page)
             pages = [page + 1, page, page - 1]
@@ -261,7 +276,7 @@ def prev_users(request, page, user_page):
             users = User.objects.all()[users_number * (user_page - 1):users_number * user_page]
             users_tasks = []
             for user in users:
-                tasks = calcualte_tasks(user, current_week, current_day)
+                tasks = calculate_tasks(user, current_week, current_day)
                 users_tasks.append(tasks)
             page = int(page)
             pages = [page - 1, page, page + 1]
